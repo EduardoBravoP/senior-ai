@@ -1,11 +1,23 @@
 from dotenv import load_dotenv
-import os
-from extract_notion_pages import extract_notion_pages
+from fastapi import FastAPI, Request
+from pydantic import BaseModel
+from chatbot import start_chatbot
+from langchain_core.messages import HumanMessage, SystemMessage
 
 load_dotenv()
 
-NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
+app = FastAPI()
 
-notion_pages = extract_notion_pages(NOTION_DATABASE_ID)
+chatbot = start_chatbot()
 
-print(notion_pages)
+class ChatRequest(BaseModel):
+    message: str
+
+class ChatResponse(BaseModel):
+    response: str
+
+@app.post("/")
+def google_chat_webhook(request: ChatRequest):
+    user_message = HumanMessage(content=request.message)
+    response = chatbot.invoke({"messages": [user_message]})
+    return ChatResponse(response=response["messages"][-1].content)
