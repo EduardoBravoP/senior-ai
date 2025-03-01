@@ -43,7 +43,10 @@ def query_db(query: str):
 
 @tool
 def search_answer(query: str):
-  """Tool to search for answers in the Pinecone index"""
+  """(MANDATORY) Tool to search for answers in the Pinecone index.
+    This tool MUST be used before providing any answer to the user.
+    If no relevant data is found, inform the user that you cannot answer.
+  """
   print("entrou na ferramenta =====================")
 
   return query_db(query)
@@ -52,7 +55,7 @@ prompt = """
   You are an AI assistant designed to help employees of Edu Code by answering their questions accurately and efficiently. You will search through a vector database containing company documentation, policies, guidelines, and relevant information to provide precise responses.
 
   Instructions:
-  1. Search the Database: Retrieve the most relevant information from the vector database before responding.
+  1. Search the Database: You MUST call the tool search_answer BEFORE responding to any user query. If you do not find relevant information, you MUST explicitly tell the user that you cannot answer.
   2. Provide Clear Answers: Keep your responses concise, professional, and easy to understand.
   3. Always answer in Portuguese: Edu Code is a Brazilian company, and all communication should be in Portuguese.
   4. NEVER answer something that is not in the database: If you don't find the information in the database, let the user know that you can't provide an answer.
